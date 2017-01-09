@@ -11,7 +11,7 @@
 
 #define PROGNAME1       "Home Sensor"
 #define PROGNAME2       "Station"
-#define PROGVERS        "v2.0" 
+#define PROGVERS        "v2.1" 
 
 #include "Wire.h"
 #include "RFMxx.h"
@@ -20,6 +20,8 @@
 #include "Sensors.h"
 #include "EEPROM.h"
 #include "SSD1306_minimal.h"
+#include <ESP8266WiFi.h>
+#include "SensorWebClient.h"
   
 
 // --- Configuration ---------------------------------------------------------------------------------------------------
@@ -348,7 +350,32 @@ void loop(void) {
   //
   //
   display();
-  
+
+  static unsigned long lastTime= 0;
+  unsigned long currentTime= millis();
+
+  // update every 10min
+  if ((currentTime-lastTime) > (1000*60)){
+    lastTime= currentTime;
+    Sensors::sSensor * pSens;
+    
+/*
+    // sensor of fridge
+    Sensors::sSensor * pSens= sensors.getSensor( 0 );
+    sensorWebClient.send("8812ea0f0a57150e73596892218692c0", pSens->humidity );
+    sensorWebClient.send("80e3a73b12ca1951dde6ac1d421ee165", pSens->temperature );
+*/
+    // sensor of weather
+    pSens= sensors.getSensor( 1 );
+    sensorWebClient.send("fa1299d150f525759ae8265cbe781362", pSens->humidity );
+    sensorWebClient.send("c981a2c66d5e6757155e45726eda805d", pSens->temperature );
+
+    // sensor of dining room
+    pSens= sensors.getSensor( 2 );
+    sensorWebClient.send("8812ea0f0a57150e73596892218692c0", pSens->humidity );
+    sensorWebClient.send("80e3a73b12ca1951dde6ac1d421ee165", pSens->temperature );
+    
+  }
   
 }
 
@@ -362,7 +389,11 @@ void setup(void) {
     Serial.println();
     Serial.println("*** LaCrosse weather station wireless receiver for IT+ sensors ***");
 
-
+  // call the setup for wifi
+  char * ssid= "KBBL";
+  char * password= "abcdef01234567890123456789";
+  sensorWebClient.setup(ssid, password);
+  
   // OLED
   oled.init(0x3c);
   oled.clear();
