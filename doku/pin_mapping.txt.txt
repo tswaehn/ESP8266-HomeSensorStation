@@ -1,0 +1,10 @@
+
+CoPiino		NodeMCU
+	D2	=>	D4
+	D10	=>	D5
+	D11	=>	D6
+	D12	=>	D7
+	D13	=> 	D8
+	
+	
+	
