@@ -11,7 +11,7 @@
 
 #define PROGNAME1       "Home Sensor"
 #define PROGNAME2       "Station"
-#define PROGVERS        "v2.1" 
+#define PROGVERS        "v2.2" 
 
 #include "Wire.h"
 #include "RFMxx.h"
@@ -31,7 +31,7 @@
 // The following settings can also be set from FHEM
 #define ENABLE_ACTIVITY_LED    1         // <n>a     set to 0 if the blue LED bothers
 bool DEBUG                   = 1;        // <n>d     set to 1 to see debug messages
-bool ANALYZE_FRAMES          = 0;        // <n>z     set to 1 to display analyzed frame data instead of the normal data
+bool ANALYZE_FRAMES          = 1;        // <n>z     set to 1 to display analyzed frame data instead of the normal data
 unsigned long DATA_RATE_R1   = 17241ul;  // <n>r     use one of the possible data rates (for RFM #1)
 unsigned long DATA_RATE_R2   = 9579ul;   // <n>R     use one of the possible data rates (for RFM #2)
 uint16_t TOGGLE_INTERVAL_R1  = 0;        // <n>t     0=no toggle, else interval in seconds (for RFM #1)
@@ -354,17 +354,18 @@ void loop(void) {
   static unsigned long lastTime= 0;
   unsigned long currentTime= millis();
 
-  // update every 10min
+  // upload every 10min to Internet
+  /*
   if ((currentTime-lastTime) > (1000*60)){
     lastTime= currentTime;
     Sensors::sSensor * pSens;
     
-/*
+
     // sensor of fridge
-    Sensors::sSensor * pSens= sensors.getSensor( 0 );
-    sensorWebClient.send("8812ea0f0a57150e73596892218692c0", pSens->humidity );
-    sensorWebClient.send("80e3a73b12ca1951dde6ac1d421ee165", pSens->temperature );
-*/
+    //Sensors::sSensor * pSens= sensors.getSensor( 0 );
+    //sensorWebClient.send("8812ea0f0a57150e73596892218692c0", pSens->humidity );
+    //sensorWebClient.send("80e3a73b12ca1951dde6ac1d421ee165", pSens->temperature );
+
     // sensor of weather
     pSens= sensors.getSensor( 1 );
     sensorWebClient.send("fa1299d150f525759ae8265cbe781362", pSens->humidity );
@@ -376,13 +377,13 @@ void loop(void) {
     sensorWebClient.send("80e3a73b12ca1951dde6ac1d421ee165", pSens->temperature );
     
   }
+  */
   
 }
 
 
 void setup(void) {
-  
-  
+
   Serial.begin(115200);
   delay(200);
     Serial.println();
@@ -408,8 +409,8 @@ void setup(void) {
   //
   
   sensors.addSensor( 0, "Fridge     ", 53 );//53
-  sensors.addSensor( 1, "Weather    ", 0 );//4
-  sensors.addSensor( 2, "Dining Room", 42 );//42
+  sensors.addSensor( 1, "Weather    ", 60 );//4
+  sensors.addSensor( 2, "Dining Room", 6 );//42
   
   SetDebugMode(DEBUG);
   LaCrosse::USE_OLD_ID_CALCULATION = USE_OLD_IDS;

@@ -37,6 +37,7 @@ void SensorWebClient::setup(char * _ssid, char * _password) {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    
   }
 
   Serial.println("");
